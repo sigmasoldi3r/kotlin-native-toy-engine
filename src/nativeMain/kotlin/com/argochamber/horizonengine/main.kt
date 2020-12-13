@@ -23,19 +23,24 @@ class Game {
 }
 
 class Test(private val model: Model, private val shader: Shader) : Drawable {
+    private var i = 0f
     override fun draw() {
+        i += 0.001f
         shader.bind()
+//        shader["MVP"].set(getMVP())
+        // TODO: Make MVP work!
+        shader["MVP"].set(Matrix.rotate(Vector.FRONT, i))
         model.draw()
     }
 }
 
-fun test() {
+fun getMVP(): Matrix {
     val target = Vector.of()
-    val position = Vector.of()
-    val view = Transforms.lookAt(target, position, Vector.UP)
+    val position = Vector.of(4f, 3f, 3f)
+    val view = Transforms.lookAt(position, target, Vector.UP)
     val projection = Transforms.perspective(90f.toRadians(), 4f / 3f, .1f, 100f)
-    val model = Matrix()
-    val mvp = projection * view * model
+    val model = Matrix.identity()
+    return projection * view * model
     // MVP Thing ^
 }
 

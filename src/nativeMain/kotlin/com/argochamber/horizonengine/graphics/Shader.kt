@@ -1,5 +1,6 @@
 package com.argochamber.horizonengine.graphics
 
+import com.argochamber.horizonengine.math.Matrix
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.useContents
 
@@ -21,6 +22,20 @@ class Shader(private val shader: CValue<horizon.Shader>) {
             return Shader(result)
         }
     }
+
+    /**
+     * Program parameter location.
+     */
+    class Uniform(private val uniform: CValue<horizon.Uniform>) {
+        fun set(matrix: Matrix) {
+            horizon.setUniformMatrix(uniform, 1, 0, matrix.ref)
+        }
+    }
+
+    /**
+     * Gets the uniform at the given name.
+     */
+    operator fun get(name: String) = Uniform(horizon.getUniform(shader, name))
 
     /**
      * Binds this shader program to the context.

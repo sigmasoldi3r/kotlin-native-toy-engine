@@ -16,7 +16,7 @@ class Matrix(data: FloatArray = raw()): NFloatHeap(data) {
          * Builds a translation matrix.
          */
         fun translate(by: Vector): Matrix {
-            val m = Matrix()
+            val m = identity()
             m.translate(by)
             return m
         }
@@ -25,7 +25,7 @@ class Matrix(data: FloatArray = raw()): NFloatHeap(data) {
          * Builds a rotation matrix.
          */
         fun rotate(axis: Vector, angle: Float): Matrix {
-            val m = Matrix()
+            val m = identity()
             m.rotate(axis, angle)
             return m
         }
@@ -34,8 +34,20 @@ class Matrix(data: FloatArray = raw()): NFloatHeap(data) {
          * Builds an scaling matrix.
          */
         fun scale(by: Vector): Matrix {
-            val m = Matrix()
+            val m = identity()
             m.scale(by)
+            return m
+        }
+
+        /**
+         * Creates the identity matrix.
+         */
+        fun identity(): Matrix {
+            val m = Matrix()
+            m[0, 0] = 1f
+            m[1, 1] = 1f
+            m[2, 2] = 1f
+            m[3, 3] = 1f
             return m
         }
     }
@@ -50,6 +62,9 @@ class Matrix(data: FloatArray = raw()): NFloatHeap(data) {
     }
 
     operator fun get(i: Int, j: Int) = data[i + j * 4]
+    operator fun set(i: Int, j: Int, value: Float) {
+        data[i + j * 4] = value
+    }
 
     /**
      * Performs translation of this matrix.
