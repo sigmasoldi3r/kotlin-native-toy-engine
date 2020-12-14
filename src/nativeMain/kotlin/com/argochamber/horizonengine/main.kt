@@ -21,10 +21,13 @@ class Test(private val model: Model, private val shader: Shader) : Spatial(), Dr
 }
 
 fun main() {
-    val engine = Engine.create(1024, 768, "Agachuu y anchoas de playa")
-    cam.position.x = 3f
-    cam.position.y = 3f
-    cam.position.z = 3f
+    val engine = Engine()
+    engine.createWindow(1024, 768, "Horizon Engine v1.0").let { result ->
+        if (result !== Engine.WindowResult.Ok) error(result.message)
+    }
+    cam.position.x = .3f
+    cam.position.y = .3f
+    cam.position.z = .3f
     val shader = Shader.compile(
         """
         #version 330 core
@@ -42,7 +45,7 @@ fun main() {
           color = tint;
         }
         """) ?: error("Could not compile the shader.")
-    val model = Model.load("assets/triangle.mdl")
+    val model = Model.load("assets/cube.json")
     val test = Test(model, shader)
     engine.enableDraw(test)
     engine.start()

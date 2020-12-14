@@ -3,6 +3,7 @@ package com.argochamber.horizonengine.graphics
 import com.argochamber.horizonengine.math.Matrix
 import com.argochamber.horizonengine.math.Vector
 import kotlinx.cinterop.CValue
+import kotlinx.cinterop.toBoolean
 import kotlinx.cinterop.useContents
 
 /**
@@ -15,12 +16,10 @@ class Shader(private val shader: CValue<horizon.Shader>) {
          */
         fun compile(vertex: String, fragment: String): Shader? {
             val result = horizon.compileShaderProgram(vertex, fragment)
-            result.useContents {
-                if (id == 0u) {
-                    return null
-                }
+            if (horizon.isShaderOk(result)) {
+                return Shader(result)
             }
-            return Shader(result)
+            return null
         }
     }
 
@@ -29,7 +28,7 @@ class Shader(private val shader: CValue<horizon.Shader>) {
      */
     class Uniform(private val uniform: CValue<horizon.Uniform>) {
         fun set(matrix: Matrix) {
-            horizon.setUniformMatrix(uniform, 1, 0, matrix.ref)
+            horizon.setUniformMatrix(uniform, 1, false, matrix.ref)
         }
         fun set(vector: Vector) {
             horizon.setUniformVector(uniform, 1, vector.ref)
