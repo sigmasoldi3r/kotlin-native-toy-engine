@@ -69,22 +69,25 @@ class Matrix(data: FloatArray = raw()): NFloatHeap(data) {
     /**
      * Performs translation of this matrix.
      */
-    fun translate(by: Vector) {
+    fun translate(by: Vector): Matrix {
         translateMatrix(ref, by.ref)
+        return this
     }
 
     /**
      * Performs scaling of this matrix.
      */
-    fun scale(by: Vector) {
+    fun scale(by: Vector): Matrix {
         scaleMatrix(ref, by.ref)
+        return this
     }
 
     /**
      * Performs rotation of this matrix.
      */
-    fun rotate(axis: Vector, angle: Float) {
+    fun rotate(axis: Vector, angle: Float): Matrix {
         rotateMatrix(ref, axis.ref, angle)
+        return this
     }
 
     override fun toString(): String {

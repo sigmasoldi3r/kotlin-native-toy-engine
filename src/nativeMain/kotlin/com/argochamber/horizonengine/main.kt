@@ -3,15 +3,11 @@ package com.argochamber.horizonengine
 import com.argochamber.horizonengine.graphics.Drawable
 import com.argochamber.horizonengine.graphics.Model
 import com.argochamber.horizonengine.graphics.Shader
-import com.argochamber.horizonengine.graphics.Transforms
 import com.argochamber.horizonengine.math.toRadians
-import com.argochamber.horizonengine.math.Matrix
 import com.argochamber.horizonengine.math.Vector
 import com.argochamber.horizonengine.scene.Node
-
-open class Spatial : Node() {
-//    val transform = Mat4()
-}
+import com.argochamber.horizonengine.scene.PerspectiveCamera
+import com.argochamber.horizonengine.scene.Spatial
 
 class Game {
     var root = Node()
@@ -22,29 +18,22 @@ class Game {
     }
 }
 
-class Test(private val model: Model, private val shader: Shader) : Drawable {
-    private var i = 0f
+val cam = PerspectiveCamera(90f.toRadians(), 1024f / 768f, .1f, 100f)
+
+class Test(private val model: Model, private val shader: Shader) : Spatial(), Drawable {
+    var tint = Vector.WHITE
     override fun draw() {
-        i += 0.001f
         shader.bind()
-//        shader["MVP"].set(getMVP())
-        // TODO: Make MVP work!
-        shader["MVP"].set(Matrix.rotate(Vector.FRONT, i))
+        shader["MVP"].set(cam.project(globalTransform))
+        shader["tint"].set(tint)
         model.draw()
     }
 }
 
-fun getMVP(): Matrix {
-    val target = Vector.of()
-    val position = Vector.of(4f, 3f, 3f)
-    val view = Transforms.lookAt(position, target, Vector.UP)
-    val projection = Transforms.perspective(90f.toRadians(), 4f / 3f, .1f, 100f)
-    val model = Matrix.identity()
-    return projection * view * model
-    // MVP Thing ^
-}
-
 fun start() {
+    cam.position.x = 3f
+    cam.position.y = 3f
+    cam.position.z = 3f
     val shader = Shader.compile(
         """
         #version 330 core
@@ -57,8 +46,9 @@ fun start() {
         """
         #version 330 core
         out vec3 color;
+        uniform vec3 tint;
         void main(){
-          color = vec3(1,0,0);
+          color = tint;
         }
         """) ?: error("Could not compile the shader.")
     val model = Model.load("assets/triangle.mdl")
