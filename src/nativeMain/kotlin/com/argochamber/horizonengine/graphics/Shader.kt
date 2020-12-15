@@ -9,7 +9,7 @@ import kotlinx.cinterop.useContents
 /**
  * Shader graphics wrapper.
  */
-class Shader(private val shader: CValue<horizon.Shader>) {
+class Shader(val shader: CValue<horizon.Shader>) {
     companion object {
         /**
          * Compiles a simple shader model consisting on vertex and fragment only.

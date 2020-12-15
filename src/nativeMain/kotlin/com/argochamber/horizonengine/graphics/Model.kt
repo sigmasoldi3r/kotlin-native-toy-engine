@@ -5,7 +5,7 @@ import kotlinx.cinterop.CValue
 /**
  * Simple model object.
  */
-class Model(private val model: CValue<horizon.Model>) {
+class Model(val model: CValue<horizon.Model>) {
     companion object {
         /**
          * Loads the model from disk.
@@ -16,7 +16,7 @@ class Model(private val model: CValue<horizon.Model>) {
     /**
      * Makes a draw call for this model.
      */
-    fun draw() {
-        horizon.drawModel(model)
+    fun draw(texture: Texture) {
+        horizon.drawModel(model, texture.texture)
     }
 }
