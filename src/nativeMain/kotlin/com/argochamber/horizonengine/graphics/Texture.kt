@@ -5,7 +5,7 @@ import kotlinx.cinterop.CValue
 /**
  * Texture object.
  */
-class Texture(val texture: CValue<horizon.Texture>) {
+class Texture(private val texture: CValue<horizon.Texture>) {
     companion object {
         fun load(from: String): Texture? {
             val texture = horizon.loadTexturePNG(from)
@@ -13,5 +13,9 @@ class Texture(val texture: CValue<horizon.Texture>) {
                 return Texture(texture)
             return null
         }
+    }
+
+    fun bind() {
+        horizon.bindTexture(texture)
     }
 }

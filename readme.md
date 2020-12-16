@@ -21,3 +21,9 @@ For that reason, some basic rules must be enforced:
   - All long lifetime objects (Non function local) **must** exist in Kotlin and be owned by the GC.
 
 Other rules might arise with time.
+
+## Backlog
+
+Project backlog tasks, things non-crucial left to do in order to improve the engine.
+
+- [ ] Make indexed render UVs work.

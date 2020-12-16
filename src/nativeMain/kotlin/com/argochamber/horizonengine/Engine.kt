@@ -45,7 +45,7 @@ class Engine {
      * Starts the game loop.
      */
     fun start() {
-        horizon.setupInput()
+        horizon.drawLoopSetup()
         do {
             horizon.clear()
             drawQueue.forEach(Drawable::draw)

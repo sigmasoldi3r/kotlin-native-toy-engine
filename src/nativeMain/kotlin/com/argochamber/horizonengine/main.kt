@@ -4,6 +4,7 @@ import com.argochamber.horizonengine.graphics.Drawable
 import com.argochamber.horizonengine.graphics.Model
 import com.argochamber.horizonengine.graphics.Shader
 import com.argochamber.horizonengine.graphics.Texture
+import com.argochamber.horizonengine.math.Matrix
 import com.argochamber.horizonengine.math.toRadians
 import com.argochamber.horizonengine.math.Vector
 import com.argochamber.horizonengine.scene.PerspectiveCamera
@@ -15,10 +16,11 @@ class Test(private val model: Model, private val shader: Shader, private val tex
     var tint = Vector.WHITE
     var i = 0f
     override fun draw() {
+        texture.bind()
         shader.bind()
-        shader["MVP"].set(cam.project(globalTransform))
+        shader["MVP"].set(cam.project(Matrix.identity()))
         shader["tint"].set(tint)
-        model.draw(texture)
+        model.draw()
         cam.position.x = kotlin.math.sin(i) * 3f
         cam.position.z = kotlin.math.cos(i) * 3f
         i += 0.005f
@@ -55,7 +57,7 @@ fun main() {
           color = tint * texture(texture, uv).rgb;
         }
         """) ?: error("Could not compile the shader.")
-    val model = Model.load("assets/cube.json")
+    val model = Model.load("assets/spaceplane.obj")
     val texture = Texture.load("assets/player_body.png") ?: error("Could not load the texture.")
     val test = Test(model, unlit, texture)
 //    val test2 = Test(model, unlit, texture)
