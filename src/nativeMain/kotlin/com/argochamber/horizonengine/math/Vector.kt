@@ -10,6 +10,7 @@ class Vector(data: FloatArray = raw()): NFloatHeap(data) {
     companion object {
         fun raw() = FloatArray(4){0f}
 
+        val ONE get() = of(1f)
         val ZERO get() = of()
         val RIGHT get() = of(1f, 0f, 0f)
         val UP get() = of(0f, 1f, 0f)

@@ -16,14 +16,15 @@ class Transform {
 
     var position = Vector.ZERO
     var rotation = Vector.ZERO
-    var scale = Vector.ZERO
+    var scale = Vector.ONE
 
 //    var affine = Matrix.identity()
-    val affine get() = Matrix.rotate(Vector.FRONT, rotation.z)
+    val affine get() = Matrix
+        .translate(position)
+        .rotate(Vector.FRONT, rotation.z)
         .rotate(Vector.UP, rotation.y)
         .rotate(Vector.RIGHT, rotation.x)
         .scale(scale)
-        .translate(position)
 
     /**
      * Updates the affine.
