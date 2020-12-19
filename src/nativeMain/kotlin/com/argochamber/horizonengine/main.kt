@@ -16,8 +16,8 @@ class Test(private val model: Model, private val shader: Shader, private val tex
     override fun draw(delta: Float, vp: Matrix) {
         texture.bind()
         shader.bind()
-        shader["MVP"].set(vp * transform.affine)
-        shader["tint"].set(tint)
+        shader["MVP"]?.set(vp * transform.affine)
+        shader["tint"]?.set(tint)
         model.draw()
     }
 }
@@ -31,28 +31,31 @@ fun main() {
     cam.position.x = 3f
     cam.position.y = 3f
     cam.position.z = 3f
-    val unlit = Shader.compile(
+    val unlit = Shader.building {
+        vertex = """
+            #version 330 core
+            layout(location = 0) in vec3 vertex;
+            layout(location = 1) in vec2 uvs;
+            out vec2 uv;
+            uniform mat4 MVP;
+            void main(){
+              gl_Position =  MVP * vec4(vertex, 1);
+              uv = vec2(uvs.x, 1.0-uvs.y);
+            }
         """
-        #version 330 core
-        layout(location = 0) in vec3 vertex;
-        layout(location = 1) in vec2 uvs;
-        out vec2 uv;
-        uniform mat4 MVP;
-        void main(){
-          gl_Position =  MVP * vec4(vertex, 1);
-          uv = vec2(uvs.x, 1.0-uvs.y);
-        }
-        """,
+        fragment = """
+            #version 330 core
+            in vec2 uv;
+            out vec3 color;
+            uniform vec3 tint;
+            uniform sampler2D texture;
+            void main(){
+              color = tint * texture(texture, uv).rgb;
+            }
         """
-        #version 330 core
-        in vec2 uv;
-        out vec3 color;
-        uniform vec3 tint;
-        uniform sampler2D texture;
-        void main(){
-          color = tint * texture(texture, uv).rgb;
-        }
-        """) ?: error("Could not compile the shader.")
+        uniform += "tint"
+        uniform += "MVP"
+    } ?: error("Could not compile the shader.")
     val model = Model.load("assets/spaceplane.obj")
     val texture = Texture.load("assets/player_body.png") ?: error("Could not load the texture.")
     val range = (-3..3)
