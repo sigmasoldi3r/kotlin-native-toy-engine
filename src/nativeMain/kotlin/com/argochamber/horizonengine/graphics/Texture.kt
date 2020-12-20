@@ -7,7 +7,11 @@ import kotlinx.cinterop.CValue
  */
 class Texture(private val texture: CValue<horizon.Texture>) {
     companion object {
-        fun load(from: String): Texture? {
+
+        /**
+         * Loads the PNG texture from disk.
+         */
+        fun loadPNGFromDisk(from: String): Texture? {
             val texture = horizon.loadTexturePNG(from)
             if (horizon.isTextureOk(texture))
                 return Texture(texture)

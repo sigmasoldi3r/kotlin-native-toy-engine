@@ -1,5 +1,7 @@
 package com.argochamber.horizonengine
 
+import com.argochamber.horizonengine.assets.Wad
+import com.argochamber.horizonengine.core.using
 import com.argochamber.horizonengine.graphics.Drawable
 import com.argochamber.horizonengine.graphics.Model
 import com.argochamber.horizonengine.graphics.Shader
@@ -23,6 +25,14 @@ class Test(private val model: Model, private val shader: Shader, private val tex
 }
 
 fun main() {
+    Wad.from("F:\\SteamLibrary\\steamapps\\common\\Half-Life\\valve\\halflife.wad").using {
+        val header = readHeader()
+        val entries = header.readEntries()
+        for (entry in entries) {
+            val texture = entry.loadTexture()
+        }
+    }
+/*
     val cam = PerspectiveCamera(90f.toRadians(), 1024f / 768f, .1f, 100f)
     val engine = Engine(cam)
     engine.createWindow(1024, 768, "Horizon Engine v1.0").let { result ->
@@ -48,9 +58,9 @@ fun main() {
             in vec2 uv;
             out vec3 color;
             uniform vec3 tint;
-            uniform sampler2D texture;
+            uniform sampler2D texture_sampler;
             void main(){
-              color = tint * texture(texture, uv).rgb;
+              color = tint * texture(texture_sampler, uv).rgb;
             }
         """
         uniform += "tint"
@@ -72,4 +82,5 @@ fun main() {
         }
     }
     engine.start()
+     */
 }
