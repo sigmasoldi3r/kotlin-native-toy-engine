@@ -1,4 +1,4 @@
-headers = graphics.h spatial.h wad.h
+headers = graphics.h spatial.h wad.h bsp.h
 
 compilerOpts.mingw = -I..\\engine-core\\include
 linkerOpts.mingw = -L..\\engine-core\\build\\lib -lhorizon

@@ -24,6 +24,9 @@ class Wad(private val file: CPointer<horizon.WadFile>): Closeable {
             for ((path, pkg) in paths) {
                 from(path).using {
                     val header = readHeader()
+                    if (!header.ok) {
+                        error("Invalid WAD signature \"${header.signature}\"!")
+                    }
                     val entries = header.readEntries()
                     for (entry in entries) {
                         val (texture, info) = entry.loadTexture()
@@ -48,6 +51,7 @@ class Wad(private val file: CPointer<horizon.WadFile>): Closeable {
         val signature = header.extracting { it.signature.toKString() }
         val count = header.extracting { it.directoryCount }
         val offset = header.extracting { it.directoryOffset }
+        val ok get() = horizon.isWADHeaderSignatureOK(header)
 
         /**
          * Reads all the entries of this WAD file.
