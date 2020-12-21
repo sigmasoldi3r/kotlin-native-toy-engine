@@ -1,5 +1,6 @@
 package com.argochamber.horizonengine
 
+import com.argochamber.horizonengine.assets.Bsp
 import com.argochamber.horizonengine.assets.Wad
 import com.argochamber.horizonengine.core.using
 import com.argochamber.horizonengine.game.Game
@@ -24,11 +25,13 @@ class Test(private val game: Game, private val model: Model, private val shader:
     }
 }
 
-fun main() {
-    val game = Game.create(1024, 768, "Horizon Engine v1.0").unwrap()
-    val cam = game.camera as? PerspectiveCamera ?: error("The camera attribute is not configured properly!")
+/**
+ * Demo function.
+ */
+fun Game.demo() {
+    val cam = camera as? PerspectiveCamera ?: error("The camera attribute is not configured properly!")
     cam.position.y = 3f
-    Wad.bulkLoad(game, listOf(
+    Wad.bulkLoad(this, listOf(
         "assets/engine.wad" to "engine",
         "assets/halflife.wad" to "halflife"))
     val unlit = Shader.building {
@@ -63,14 +66,28 @@ fun main() {
     range.forEach { x ->
         range.forEach { y ->
             range.forEach { z ->
-                val test = Test(game, model, unlit)
+                val test = Test(this, model, unlit)
                 test.position.x = x.toFloat()
                 test.position.y = y.toFloat()
                 test.position.z = z.toFloat()
 //                test.scale = Vector.of(.25f)
-                game.enableDraw(test)
+                enableDraw(test)
             }
         }
     }
-    game.start()
+    start()
+}
+
+fun main() {
+    val game = Game.create(1024, 768, "Horizon Engine v1.0").unwrap()
+    Bsp.open("assets/c1a0.bsp").using {
+        val header = readHeader()
+        val entities = readEntities(header)
+        for (entry in entities.entities) {
+            println("ENTITY ->")
+            for ((k, v) in entry) {
+                println("  $k = $v")
+            }
+        }
+    }
 }

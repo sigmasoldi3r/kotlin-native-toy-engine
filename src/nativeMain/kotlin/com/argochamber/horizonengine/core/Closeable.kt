@@ -1,7 +1,7 @@
 package com.argochamber.horizonengine.core
 
 /**
- * Something abstract that should be closed at some point.
+ * Abstraction of descriptors that might need to be closed at some point.
  */
 interface Closeable {
     /**
