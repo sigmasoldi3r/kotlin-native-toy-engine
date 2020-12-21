@@ -14,7 +14,7 @@ class PerspectiveCamera(fov: Float, ratio: Float, near: Float, far: Float) : Spa
 
     var i = 0f
     override fun getViewProjection(): Matrix {
-        i += 0.005f
+        i += 0.001f
         position.x = kotlin.math.sin(i) * 3f
         position.z = kotlin.math.cos(i) * 3f
         return projection * Transforms.lookAt(transform.position, target, Vector.UP)

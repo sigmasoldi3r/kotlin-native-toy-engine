@@ -2,8 +2,9 @@ package com.argochamber.horizonengine.assets
 
 import com.argochamber.horizonengine.core.Closeable
 import com.argochamber.horizonengine.core.extracting
+import com.argochamber.horizonengine.core.using
+import com.argochamber.horizonengine.game.Game
 import com.argochamber.horizonengine.graphics.Texture
-import horizon.readWADTextureData
 import kotlinx.cinterop.*
 
 /**
@@ -11,7 +12,28 @@ import kotlinx.cinterop.*
  */
 class Wad(private val file: CPointer<horizon.WadFile>): Closeable {
     companion object {
+        /**
+         * Opens the wad file for reading.
+         */
         fun from(path: String) = Wad(horizon.openWAD(path)!!)
+
+        /**
+         * Bulk load of many wads into texture spaces.
+         */
+        fun bulkLoad(game: Game, paths: List<Pair<String, String>>) {
+            for ((path, pkg) in paths) {
+                from(path).using {
+                    val header = readHeader()
+                    val entries = header.readEntries()
+                    for (entry in entries) {
+                        val (texture, info) = entry.loadTexture()
+                        val name = info.name
+                        println("Loading texture $pkg.$name...")
+                        game.supplyTexture("$pkg.$name", texture)
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -73,7 +95,7 @@ class Wad(private val file: CPointer<horizon.WadFile>): Closeable {
         /**
          * Small descriptor of the entry.
          */
-        class Data(data: CValue<horizon.BspMipTexture>) {
+        class Info(data: CValue<horizon.BspMipTexture>) {
             val height = data.extracting { it.height }
             val width = data.extracting { it.width }
             val name = data.extracting { it.name.toKString() }
@@ -81,10 +103,14 @@ class Wad(private val file: CPointer<horizon.WadFile>): Closeable {
         }
     }
 
-    fun Entry.loadTexture(): Pair<Texture, Entry.Data> {
-        val header = Entry.Data(readWADTextureData(file, filePosition))
-        println("-> ${header.name} ( ${header.width} x ${header.height} )")
-        TODO("Add texture loading for actual graphics")
+    /**
+     * Loads the texture from the entry, if is inside a using WAD block.
+     */
+    fun Entry.loadTexture(): Pair<Texture, Entry.Info> {
+        val info = Entry.Info(horizon.readWADTextureInfo(file, filePosition))
+        val id = horizon.readWADTexture(file, filePosition)
+        val texture = Texture(id)
+        return texture to info
     }
 
     /**
