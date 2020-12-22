@@ -59,8 +59,14 @@ class Bsp(private val file: CPointer<horizon.BspFile>) : Closeable {
     /**
      * Reads all the vertices in the BSP file.
      */
-    fun readVertices(header: Header) {
+    fun readVertices(header: Header): VerticesLump {
+        val list = FloatArray(4).let { raw ->
+            val list = mutableListOf<Vector>()
 
+            list
+        }
+            return VerticesLump(list.toTypedArray())
+        }
     }
 
     /**
